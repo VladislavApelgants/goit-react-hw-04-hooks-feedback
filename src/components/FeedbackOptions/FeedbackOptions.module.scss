@@ -1,0 +1,16 @@
+.button {
+  border-radius: 10px;
+  border: transparent;
+  height: 25px;
+  background-color: rgb(107, 129, 255);
+  background: rgb(238, 174, 202);
+  background: radial-gradient(
+    circle,
+    rgba(238, 174, 202, 1) 0%,
+    rgba(148, 187, 233, 1) 100%
+  );
+
+  & + & {
+    margin-left: 5px;
+  }
+}

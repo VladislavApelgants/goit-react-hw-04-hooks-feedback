@@ -1,0 +1,17 @@
+.statistics__list {
+  list-style: none;
+  padding: 0;
+}
+
+.statistics__item {
+  text-align: start;
+  font-size: 18px;
+  font-weight: 500;
+  &:not(:last-child) {
+    margin-bottom: 10px;
+  }
+}
+
+.statistics__value {
+  margin-left: 10px;
+}
