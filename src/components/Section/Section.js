@@ -1,74 +1,76 @@
-import React, { Component } from 'react';
+import { useState } from 'react';
 import s from './Section.module.scss';
 import PropTypes from 'prop-types';
 import Statistics from '../Statistics';
 import FeedbackOptions from '../FeedbackOptions';
 import Notification from '../Notification';
 
-class Section extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  };
+function Section({ title }) {
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
 
-  changeState = e => {
+  const changeState = e => {
     const { name } = e.currentTarget;
-    this.setState(prevState => {
-      return { [name]: (prevState[name] += 1) };
-    });
+
+    switch (name) {
+      case 'good':
+        setGood(prevGood => (prevGood += 1));
+        break;
+      case 'neutral':
+        setNeutral(prevNeutral => (prevNeutral += 1));
+        break;
+      case 'bad':
+        setBad(prevBad => (prevBad += 1));
+        break;
+      default:
+        return;
+    }
   };
 
-  countTotalFeedback = () => {
-    const { good, neutral, bad } = this.state;
+  const countTotalFeedback = () => {
     const sum = good + neutral + bad;
     return sum;
   };
 
-  countPositiveFeedbackPercentage = () => {
-    const { good } = this.state;
-    const positiveFeedbackPercentage = (good / this.countTotalFeedback()) * 100;
+  const countPositiveFeedbackPercentage = () => {
+    const positiveFeedbackPercentage = (good / countTotalFeedback()) * 100;
     return positiveFeedbackPercentage;
   };
 
-  render() {
-    const { good, neutral, bad } = this.state;
-    const { title } = this.props;
+  return (
+    <section className={s.feedback}>
+      <div className={s.container}>
+        <h2>Reviews widget</h2>
+        <div className={s.box}>
+          <p className={s.feedback__text}>{title}</p>
 
-    return (
-      <section className={s.feedback}>
-        <div className={s.container}>
-          <h2>Reviews widget</h2>
-          <div className={s.box}>
-            <p className={s.feedback__text}>{title}</p>
+          <FeedbackOptions
+            options={['good', 'neutral', 'bad']}
+            onLeaveFeedback={changeState}
+          />
 
-            <FeedbackOptions
-              options={['good', 'neutral', 'bad']}
-              onLeaveFeedback={this.changeState}
+          <p className={s.statistics__text}>Statistics</p>
+
+          {countTotalFeedback() === 0 ? (
+            <Notification message="No feedback given" />
+          ) : (
+            <Statistics
+              good={good}
+              neutral={neutral}
+              bad={bad}
+              total={countTotalFeedback()}
+              positivePercentage={
+                !countPositiveFeedbackPercentage()
+                  ? 0
+                  : Number(countPositiveFeedbackPercentage().toFixed(1))
+              }
             />
-
-            <p className={s.statistics__text}>Statistics</p>
-
-            {this.countTotalFeedback() === 0 ? (
-              <Notification message="No feedback given" />
-            ) : (
-              <Statistics
-                good={good}
-                neutral={neutral}
-                bad={bad}
-                total={this.countTotalFeedback()}
-                positivePercentage={
-                  !this.countPositiveFeedbackPercentage()
-                    ? 0
-                    : this.countPositiveFeedbackPercentage().toFixed(1)
-                }
-              />
-            )}
-          </div>
+          )}
         </div>
-      </section>
-    );
-  }
+      </div>
+    </section>
+  );
 }
 
 Section.propTypes = {
